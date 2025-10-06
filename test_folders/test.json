@@ -1,0 +1,101 @@
+{
+    'error_code': 'OK', 
+    'data': {
+        'code': 1, 
+        'message': 'OK', 
+        'result': {
+            '0xaf4c1405aa8ab2a4f267a9700f9230ddc592f63f': {
+                'anti_whale_modifiable': '0', 
+                'buy_tax': '0', 
+                'can_take_back_ownership': '0', 
+                'cannot_buy': '0', 
+                'cannot_sell_all': '0', 
+                'creator_address': '0xa55a6307790023b96d9c678510d2d2d9f052d0b5', 
+                'creator_balance': '3788487.140913420908540945', 
+                'creator_percent': '0.003824', 
+                'dex': [
+                    {
+                        'liquidity_type': 'UniV2', 
+                        'name': 'UniswapV2', 
+                        'liquidity': '56778.59871302', 
+                        'pair': '0x159caace6a3398719c10f4505585848f69ea2032'
+                    }
+                ], 
+                'external_call': '0', 
+                'hidden_owner': '0', 
+                'holder_count': '1086', 
+                'holders': [
+                    {'address': '0x0d1a232aa0e5b496da23610ed333e1b1f4630556', 'tag': '', 'is_contract': 0, 'balance': '44824800.999203506879102722', 'percent': '0.045241796380041439', 'is_locked': 0
+                    },
+                    {'address': '0x567d58b268c3b934fae1acd71add31486d91cddb', 'tag': '', 'is_contract': 1, 'balance': '44528150.631214486715985504', 'percent': '0.044942386338157213', 'is_locked': 0
+                    },
+                    {'address': '0x752460c77944684fb56a95a1c7aa7c0ea562231d', 'tag': '', 'is_contract': 0, 'balance': '35000000', 'percent': '0.035325597392603861', 'is_locked': 0
+                    },
+                    {'address': '0x9085c96164e1dc99f324fea48a5bc34b2c0fb56b', 'tag': '', 'is_contract': 0, 'balance': '34072144', 'percent': '0.034389109749909237', 'is_locked': 0
+                    },
+                    {'address': '0x1b238f17bc36952d131d38a844e87ab320911260', 'tag': '', 'is_contract': 0, 'balance': '31800000', 'percent': '0.032095828488137222', 'is_locked': 0
+                    },
+                    {'address': '0x159caace6a3398719c10f4505585848f69ea2032', 'tag': 'UniswapV2', 'is_contract': 1, 'balance': '30646077.786053401631723569', 'percent': '0.030931171586644090', 'is_locked': 0
+                    },
+                    {'address': '0x86e32918ce7327e882038a4fe22edd6df96439c9', 'tag': '', 'is_contract': 0, 'balance': '30000000', 'percent': '0.030279083479374738', 'is_locked': 0
+                    },
+                    {'address': '0xe096665bc10329f56646b4391fbb648fe87525c9', 'tag': '', 'is_contract': 0, 'balance': '28000000', 'percent': '0.028260477914083089', 'is_locked': 0
+                    },
+                    {'address': '0xd1f36cc856cf65c77c50cbf43913239c25eb1e4e', 'tag': '', 'is_contract': 0, 'balance': '25000000', 'percent': '0.025232569566145615', 'is_locked': 0
+                    },
+                    {'address': '0x1cf909169885f109214a171fca1cb5ead00800ee', 'tag': '', 'is_contract': 0, 'balance': '24666964.208410561866518134', 'percent': '0.024896435614973740', 'is_locked': 0
+                    }
+                ], 
+                'honeypot_with_same_creator': '0', 
+                'is_anti_whale': '0', 
+                'is_blacklisted': '0', 
+                'is_honeypot': '0', 
+                'is_in_dex': '1', 
+                'is_mintable': '0', 
+                'is_open_source': '1', 
+                'is_proxy': '0', 
+                'is_whitelisted': '0', 
+                'lp_holder_count': '1', 
+                'lp_holders': [
+                    {'address': '0x0000000000000000000000000000000000000000', 'tag': 'Null Address', 'value': None, 'is_contract': 0, 'balance': '30176.62135287074005488', 'percent': '1.000000000000000000', 'NFT_list': None, 'is_locked': 1
+                    }
+                ], 
+                'lp_total_supply': '30176.62135287074005488', 
+                'owner_address': '', 
+                'owner_balance': '0', 
+                'owner_change_balance': '0', 
+                'owner_percent': '0', 
+                'personal_slippage_modifiable': '0', 
+                'selfdestruct': '0', 
+                'sell_tax': '0', 
+                'slippage_modifiable': '0', 
+                'token_name': 'Zygo the frog', 
+                'token_symbol': 'Zygo', 
+                'total_supply': '990782961.46034795390619894', 
+                'trading_cooldown': '0', 
+                'transfer_pausable': '0', 
+                'transfer_tax': '0'
+            }
+        }
+    }
+}
+
+
+
+"anti_whale_modifiable": "0",
+            "buy_tax": "0", ####
+            "can_take_back_ownership": "0",
+            "cannot_buy": "0",
+            "cannot_sell_all": "0",
+            "creator_address": "0x1507f82d9103f878d7821bf536ba46a961f939b9",
+            "creator_balance": "0", ####
+            "creator_percent": "0.000000",
+"token_name": "Baby Sato",
+            "token_symbol": "BABY SATO",
+"is_anti_whale": "0",
+            "is_blacklisted": "0",
+            "is_honeypot": "0",
+            "is_in_dex": "1",
+            "is_mintable": "0",
+            "is_open_source": "1",
+            "is_proxy": "0",
