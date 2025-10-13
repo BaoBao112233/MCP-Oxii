@@ -35,6 +35,7 @@ keys-*.json
 twitter.txt
 mirae.py
 chat_history_*.json
+service-account.json
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
