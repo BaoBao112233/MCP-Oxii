@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  oxii-mcp-server-stg:
+    image: 897722668238.dkr.ecr.ap-southeast-1.amazonaws.com/oxii-chatbot-stg-ecr:mockup-mcp-oxii-server-stg-v1-14102025
+    container_name: oxii-mcp-server-staging
+    ports:
+      - "9031:9031"
+    environment:
+      - NODE_ENV=staging
+      - PORT=9031
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - oxii-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9031/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  oxii-network:
+    driver: bridge

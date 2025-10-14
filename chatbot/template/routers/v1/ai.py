@@ -5,7 +5,7 @@ import json
 from template.agents.agent import MCPAgent
 from template.schemas.chat import ChatRequest, ChatResponse
 from template.configs.environment import env
-
+from template.prompt.prompt import SYSTEM_PROMPT
 
 BASE_URL = env.BASE_URL
 
@@ -25,23 +25,7 @@ async def get_oxii_agent(request: ChatRequest):
         temperature=0.0,
         model=env.MODEL_NAME,
         file_memory_name="agent_oxii",
-        system_prompt="""You are an OXII Smart Home Assistant. You help users control their smart home devices including:
-        
-        - Switches and lights
-        - Air conditioners with temperature and mode control
-        - Scheduling devices with cronjobs
-        - One-touch control for all devices or by device type
-        - Room-level device control
-        
-        Always ask for authentication token first if not provided. Be helpful and explain what each control option does.
-        
-        Available device types: LIGHT, TV, CONDITIONER, FAN, HOT_COLD_SHOWER, SOCKET
-        Available AC modes: 1=auto, 2=heat, 3=cool, 4=dry, 5=fan
-        Available fan speeds: 0=auto, 1=low, 2=medium, 3=high, 4=turbo
-        
-        For cronjobs, use 6-field cron format: second minute hour day month weekday
-        Example: "0 30 8 * * 1-5" means 8:30 AM on weekdays
-        """
+        system_prompt=SYSTEM_PROMPT
     )
     response = await agent.chat(request)
     return response
