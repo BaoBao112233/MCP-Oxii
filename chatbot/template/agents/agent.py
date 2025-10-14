@@ -21,6 +21,10 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 from template.schemas.chat import ChatRequest, ChatResponse
 from template.agents.histories import RedisSupportChatHistory
 from template.configs.environment import env
+from template.agents.tools.sample_tools import (
+    create_plan_tool,
+    execute_step_tool,
+)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -144,7 +148,7 @@ class MCPAgent:
                     }
                 }
             ) as client:
-                tools = client.get_tools()
+                tools = client.get_tools()#.append(execute_step_tool)
                 logger.info("mcp_tools: %s", [tool.name for tool in tools])
                 # Create the agent
                 self.agent = OpenAIFunctionsAgent(

@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  app:
+    image: 897722668238.dkr.ecr.ap-southeast-1.amazonaws.com/oxii-chatbot-stg-ecr:mockup-oxii-smart-home-chatbot-stg-v1.1-14102025
+    ports:
+      - "7000:7000"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    volumes:
+      - ./app/service-account.json:/app/service-account.json:ro
+    networks:
+      - template-network
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:7379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - template-network
+    restart: unless-stopped
+
+networks:
+  template-network:
+    driver: bridge
+
+volumes:
+  redis-data:
