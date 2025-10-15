@@ -3,11 +3,11 @@ import json
 import requests
 import logging
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Union
+from typing import Dict, List, Any, Optional, Union, Sequence
 from datetime import datetime
 from pydantic import BaseModel, Field
 from langchain_community.chat_message_histories import FileChatMessageHistory
-from langchain.tools import Tool, tool, StructuredTool
+from langchain.tools import Tool, StructuredTool
 from langchain.agents import AgentExecutor
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, BaseMessage
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -73,13 +73,17 @@ def _configure_google_credentials() -> Path:
 memories = {}
 
 class MCPAgent:
-    
-    def __init__(self,
-                mcp_server_url: str,
-                file_memory_name: str,
-                system_prompt: str,
-                temperature: float = 0,
-                model: Optional[str] = None):
+
+    def __init__(
+        self,
+        mcp_server_url: str,
+        file_memory_name: str,
+        system_prompt: str,
+        temperature: float = 0,
+        model: Optional[str] = None,
+        extra_tools: Optional[Sequence[Union[Tool, StructuredTool]]] = None,
+        include_sample_tools: bool = True,
+    ):
         # Initialize LLM
         try:
             credentials_path = _configure_google_credentials()
@@ -119,6 +123,8 @@ class MCPAgent:
         ])
 
         self.mcp_server_url = mcp_server_url
+        self.include_sample_tools = include_sample_tools
+        self.extra_tools = self._init_extra_tools(extra_tools)
 
         # Default session and memory
         self.default_session_id = 0
@@ -148,8 +154,15 @@ class MCPAgent:
                     }
                 }
             ) as client:
-                tools = client.get_tools()#.append(execute_step_tool)
-                logger.info("mcp_tools: %s", [tool.name for tool in tools])
+                mcp_tools = list(client.get_tools())
+                logger.info("mcp_tools: %s", [tool.name for tool in mcp_tools])
+
+                tools = self._merge_tools(mcp_tools)
+                if self.extra_tools:
+                    logger.info(
+                        "local_tools: %s",
+                        [tool.name for tool in self.extra_tools],
+                    )
                 # Create the agent
                 self.agent = OpenAIFunctionsAgent(
                     llm=self.llm,
@@ -210,6 +223,51 @@ class MCPAgent:
                 response=f"I encountered an error processing your request. Please try again.",
                 error_status="error"
             )
+
+
+    def _init_extra_tools(
+        self,
+        extra_tools_input: Optional[Sequence[Union[Tool, StructuredTool]]],
+    ) -> List[Union[Tool, StructuredTool]]:
+        tools: List[Union[Tool, StructuredTool]] = []
+
+        if self.include_sample_tools:
+            tools.extend([create_plan_tool, execute_step_tool])
+
+        if extra_tools_input:
+            tools.extend(extra_tools_input)
+
+        deduped: List[Union[Tool, StructuredTool]] = []
+        seen_names = set()
+        for tool in tools:
+            name = getattr(tool, "name", None)
+            if name and name in seen_names:
+                logger.debug("Skipping duplicate tool '%s'", name)
+                continue
+            if name:
+                seen_names.add(name)
+            deduped.append(tool)
+        return deduped
+
+
+    def _merge_tools(
+        self,
+        remote_tools: List[Union[Tool, StructuredTool]],
+    ) -> List[Union[Tool, StructuredTool]]:
+        if not self.extra_tools:
+            return list(remote_tools)
+
+        merged = list(remote_tools)
+        remote_names = {getattr(tool, "name", None) for tool in remote_tools}
+
+        for local_tool in self.extra_tools:
+            name = getattr(local_tool, "name", None)
+            if name and name in remote_names:
+                logger.warning("Local tool '%s' ignored because MCP already exposes it.", name)
+                continue
+            merged.append(local_tool)
+
+        return merged
 
 
     def _get_memory(self, session_id: str, conversation_id: str) -> RedisSupportChatHistory:

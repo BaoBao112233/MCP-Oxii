@@ -81,6 +81,7 @@ def execute_step_function(step_description: str, step_number: int) -> Dict[str, 
     Args:
         step_description: Description of the step to execute
         step_number: The step number in the plan
+        step_status: Current status of the step ("failed", "in_progress", "completed")
         
     Returns:
         Dictionary with execution results
