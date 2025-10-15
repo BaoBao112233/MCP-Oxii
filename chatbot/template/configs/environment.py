@@ -33,7 +33,11 @@ class EnvironmentSettings(BaseSettings):
     USER_PHONE: str
     USER_PASSWORD: str
     USER_COUNTRY: str = "VI"
-
+    
+    # Planning API settings
+    PLANNING_API_URL: str
+    PLANNING_API_KEY: str
+    
     # MCP Server Configuration
     BASE_URL: str
     OXII_MCP_SERVER_URL: str = "http://oxii-server:9031/sse"

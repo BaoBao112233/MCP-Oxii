@@ -48,13 +48,26 @@ def switch_device_control(
     if not button_found:
         return f"Không tìm thấy thông tin của nút bấm với buttonId: {buttonId}"
     
+    # Get current status
+    current_status = BUTTON_STATES.get(buttonId, "tắt")
+    
     # Simulate control
     expected_status = "bật" if action_normalised == "on" else "tắt"
     BUTTON_STATES[buttonId] = expected_status
     
-    print(f"[MOCK] Controlling device {button_found.get('name')} -> {expected_status}")
+    button_name = button_found.get('name', 'thiết bị')
+    print(f"[MOCK] Controlling device {button_name}: {current_status} -> {expected_status}")
     
-    # Simulate delay
+    # Simulate delay for state change
     time.sleep(0.5)
     
-    return f"Thiết bị {button_found.get('name')} đã được {expected_status} thành công"
+    # Verify status change
+    new_status = BUTTON_STATES.get(buttonId)
+    if new_status != expected_status:
+        return f"Không thể {expected_status} thiết bị {button_name}. Vui lòng thử lại."
+    
+    # Check if status actually changed
+    if current_status == expected_status:
+        return f"Thiết bị {button_name} đã ở trạng thái {expected_status} từ trước"
+    
+    return f"Thiết bị {button_name} đã được {expected_status} thành công (từ {current_status} -> {expected_status})"

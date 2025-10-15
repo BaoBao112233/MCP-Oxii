@@ -145,25 +145,101 @@ class MCPAgent:
             )
             
             prompt = self.prompt
-            async with MultiServerMCPClient(
-                {
-                    "mcp-server": {
-                        # make sure you start your weather server on port 8000
-                        "url": self.mcp_server_url,
-                        "transport": "sse",
+            
+            # Try to connect to MCP server with fallback to local tools only
+            tools = []
+            mcp_connected = False
+            
+            try:
+                async with MultiServerMCPClient(
+                    {
+                        "mcp-server": {
+                            # make sure you start your weather server on port 8000
+                            "url": self.mcp_server_url,
+                            "transport": "sse",
+                        }
                     }
-                }
-            ) as client:
-                mcp_tools = list(client.get_tools())
-                logger.info("mcp_tools: %s", [tool.name for tool in mcp_tools])
-
-                tools = self._merge_tools(mcp_tools)
-                if self.extra_tools:
-                    logger.info(
-                        "local_tools: %s",
-                        [tool.name for tool in self.extra_tools],
+                ) as client:
+                    mcp_tools = list(client.get_tools())
+                    logger.info("✅ MCP connected - mcp_tools: %s", [tool.name for tool in mcp_tools])
+                    tools = self._merge_tools(mcp_tools)
+                    mcp_connected = True
+                    
+                    if self.extra_tools:
+                        logger.info(
+                            "local_tools: %s",
+                            [tool.name for tool in self.extra_tools],
+                        )
+                        
+                    # Create the agent with MCP tools
+                    self.agent = OpenAIFunctionsAgent(
+                        llm=self.llm,
+                        tools=tools,
+                        prompt=prompt
                     )
-                # Create the agent
+                    
+                    # Create the agent executor
+                    self.agent_executor = AgentExecutor(
+                        agent=self.agent,
+                        tools=tools,
+                        verbose=True,
+                        handle_parsing_errors=True,
+                        max_iterations=5
+                    )
+
+                    # Set up runnable with chat history
+                    agent_with_chat_history = RunnableWithMessageHistory(
+                        self.agent_executor,
+                        lambda session_id: memory,
+                        input_messages_key="input",
+                        history_messages_key="chat_history",
+                        output_messages_key="output"
+                    )
+                    
+                    # Prepare input data
+                    input_data = {
+                        "input": json.dumps({
+                            "user": request.message,
+                            "token": request.token,
+                        })
+                    }
+
+                    logger.info("input_data: %s", input_data)
+                    
+                    # Process the message with MCP tools
+                    response = await agent_with_chat_history.ainvoke(
+                        input_data, 
+                        config={
+                            "configurable": {"session_id": request.session_id},
+                            "run_name": f"Agent:Session{request.session_id}"
+                        }
+                    )
+                    
+                    # Extract and process the response
+                    response_text = response['output']
+                    
+                    return ChatResponse(
+                        response=response_text,
+                        tools_used=[tool.name for tool in tools]
+                    )
+                    
+            except Exception as mcp_error:
+                logger.warning(f"⚠️ MCP server connection failed: {str(mcp_error)}")
+                logger.info("🔄 Falling back to local tools only...")
+                
+                # Fallback: Use only local tools when MCP is not available
+                tools = self.extra_tools if self.extra_tools else []
+                
+                if not tools:
+                    logger.warning("⚠️ No local tools available as fallback")
+                    return ChatResponse(
+                        response="I'm currently running in limited mode. Some advanced features may not be available. How can I help you with basic operations?",
+                        error_status="partial_service"
+                    )
+                
+                logger.info("🛠️ Using local tools as fallback: %s", [tool.name for tool in tools])
+                
+                # Create the agent with local tools only  
                 self.agent = OpenAIFunctionsAgent(
                     llm=self.llm,
                     tools=tools,
@@ -196,25 +272,25 @@ class MCPAgent:
                     })
                 }
 
-                logger.info("input_data: %s", input_data)
+                logger.info("input_data (fallback mode): %s", input_data)
                 
-                # Process the message
+                # Process the message with local tools only
                 response = await agent_with_chat_history.ainvoke(
                     input_data, 
                     config={
                         "configurable": {"session_id": request.session_id},
-                        "run_name": f"Agent:Session{request.session_id}"
+                        "run_name": f"Agent:Session{request.session_id}:Fallback"
                     }
                 )
                 
                 # Extract and process the response
                 response_text = response['output']
                 
-                # If we manually added the user message, we need to manually add the AI response too
-                # if user_message_added:
-                #     memory.add_ai_message(response_text)
-                
-                return ChatResponse(response=response_text)
+                return ChatResponse(
+                    response=response_text,
+                    tools_used=[tool.name for tool in tools],
+                    info="Running in fallback mode - some features may be limited"
+                )
             
         except Exception as e:
             logger.error(f"Error processing message: {str(e)}", exc_info=True)
