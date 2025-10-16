@@ -323,15 +323,16 @@ create_plan_tool = StructuredTool.from_function(
     description="""
     Create a structured plan for a given task using the GraphQL API.
     This tool helps the Planning Agent break down complex tasks into actionable steps.
-    Input:
-    - title_plan: Title of the plan (string)
-    - goal_plan: Goal of the plan (string)
-    - list_tasks: List of tasks with title and description (list of dicts):
-        - title: Title of the task (string)
-        - description: Description of the task (string)
     """,
     args_schema=CreatePlanInput
 )
+
+    # Input:
+    # - title_plan: Title of the plan (string)
+    # - goal_plan: Goal of the plan (string)
+    # - list_tasks: List of tasks with title and description (list of dicts):
+    #     - title: Title of the task (string)
+    #     - description: Description of the task (string)
 
 # Update Task Status Tool
 update_task_status_tool = StructuredTool.from_function(
