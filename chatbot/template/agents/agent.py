@@ -23,7 +23,9 @@ from template.agents.histories import RedisSupportChatHistory
 from template.configs.environment import env
 from template.agents.tools.sample_tools import (
     create_plan_tool,
-    execute_step_tool,
+    update_task_status_tool,
+    update_plan_status_tool,
+    get_plan_by_id_tool,
 )
 
 # Configure logging
@@ -308,7 +310,7 @@ class MCPAgent:
         tools: List[Union[Tool, StructuredTool]] = []
 
         if self.include_sample_tools:
-            tools.extend([create_plan_tool, execute_step_tool])
+            tools.extend([create_plan_tool, update_task_status_tool, update_plan_status_tool, get_plan_by_id_tool])
 
         if extra_tools_input:
             tools.extend(extra_tools_input)

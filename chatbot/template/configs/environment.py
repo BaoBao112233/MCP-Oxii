@@ -43,6 +43,7 @@ class EnvironmentSettings(BaseSettings):
     OXII_MCP_SERVER_URL: str = "http://oxii-server:9031/sse"
 
     DEBUG_MODE: bool = False
+    MAX_ITERATIONS: int = 100
 
     model_config = SettingsConfigDict(env_file=get_env_filename(), env_file_encoding="utf-8")
 

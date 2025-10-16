@@ -1,0 +1,56 @@
+[
+  {
+    "session_id": 1,
+    "title": "Plan A – Mức độ đề xuất: Cao",
+    "goal_text": "mục đích",
+    "trigger": "SYSTEM",
+    "priority": 1,
+    "tasks": [
+      {
+        "order_no": 1,
+        "title": "Bật đèn phòng khách",
+        "description": "Mô tả task 1",
+        "max_retries": 2
+      },
+      {
+        "order_no": 2,
+        "title": "Bật điều hoà ở nhiệt độ 16°C",
+        "description": "Mô tả task 2",
+        "max_retries": 2
+      },
+      {
+        "order_no": 3,
+        "title": "Gửi thông báo cảnh báo tới điện thoại",
+        "description": "Mô tả task 3",
+        "max_retries": 1
+      }
+    ]
+  },
+  {
+    "session_id": 1,
+    "title": "Plan B – Mức độ đề xuất: Trung bình",
+    "goal_text": null,
+    "trigger": "SYSTEM",
+    "priority": 1,
+    "tasks": [
+      {
+        "order_no": 1,
+        "title": "Bật đèn phòng khách",
+        "description": "Mô tả task 1",
+        "max_retries": 2
+      },
+      {
+        "order_no": 2,
+        "title": "Bật điều hoà ở nhiệt độ 16°C",
+        "description": "Mô tả task 2",
+        "max_retries": 2
+      },
+      {
+        "order_no": 3,
+        "title": "Gửi thông báo cảnh báo tới điện thoại",
+        "description": "Mô tả task 3",
+        "max_retries": 1
+      }
+    ]
+  }
+]
