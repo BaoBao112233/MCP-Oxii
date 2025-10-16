@@ -17,12 +17,8 @@ class EnvironmentSettings(BaseSettings):
     APP_NAME: str
     APP_DESC: str
     APP_PORT: int
-    OPENAI_API_KEY: Optional[str] = None
-    # Vertex AI settings
-    MODEL_NAME: str = "gemini-2.5-pro"
-    GOOGLE_CLOUD_PROJECT: str
-    GOOGLE_CLOUD_LOCATION: str = "us-east1"
-    GOOGLE_APPLICATION_CREDENTIALS: str = "service-account.json"
+    OPENAI_API_KEY: str
+    MODEL_NAME: str = "gpt-4"
 
     REDIS_HOST: str = "redis"
     REDIS_PORT: int = 6379

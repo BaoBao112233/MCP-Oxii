@@ -16,7 +16,7 @@ Run all commands from inside the `chatbot/` directory.
    ```bash
    cp .env.template .env
    ```
-2. Fill in `.env` with your project details and make sure the Vertex AI service account lives at `app/service-account.json`.
+2. Fill in `.env` with your OpenAI API key.
 
 ## 🏗️ Build and Run
 

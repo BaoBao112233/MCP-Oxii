@@ -10,7 +10,7 @@ MCP-OXII combines on-chain analytics with OXII smart home automation. The platfo
 ```text
 ├── main.py                      # FastAPI entry point
 ├── template/                    # Application package
-│   ├── agents/agent.py          # Vertex AI powered MCP agent
+│   ├── agents/agent.py          # OpenAI powered MCP agent
 │   ├── routers/v1/ai.py         # HTTP endpoints for chat agents
 │   └── configs/environment.py   # Pydantic settings (reads .env)
 ├── memories/                    # Redis-backed conversation state
@@ -21,7 +21,7 @@ MCP-OXII combines on-chain analytics with OXII smart home automation. The platfo
 ### Key Components
 
 - **FastAPI Gateway** – serves REST endpoints under `/ai/*` for the chat agents.
-- **Vertex AI Agent (`template/agents/agent.py`)** – wraps Google Gemini via the official Vertex SDK; reads credentials from `app/service-account.json`.
+- **OpenAI Agent (`template/agents/agent.py`)** – wraps OpenAI GPT via the official OpenAI SDK; uses API key from environment.
 - **OXII MCP Server** – Python service powered by `mcp.server.fastmcp.FastMCP` exposing device tools (auth, list devices, switch control, AC control, cronjobs, room one-touch, etc.).
 
 ## 🧰 Environment Setup
@@ -43,11 +43,11 @@ cp .env.template .env
 
 Fill in the placeholders inside `.env`:
 
-- Google Cloud project info (`GOOGLE_CLOUD_PROJECT`, `GOOGLE_APPLICATION_CREDENTIALS=/app/service-account.json` etc.).
+- OpenAI API key (`OPENAI_API_KEY`).
 - OXII account credentials (`USER_PHONE`, `USER_PASSWORD`, `USER_COUNTRY`).
 - OXII MCP server URL (defaults to the Docker service name).
 
-> The service-account JSON used by Vertex AI lives at `app/service-account.json`. Docker compose mounts it automatically.
+> The OpenAI API key is set in the `.env` file.
 
 1. **(Optional) Poetry shell**
 
@@ -113,13 +113,13 @@ All helpers share a `tools/common.py` utility layer for HTTP calls and polling.
 
 The FastAPI router (`template/routers/v1/ai.py`) exposes:
 
-- `POST /ai/agent-oxii` ← new Vertex-powered smart home agent
+- `POST /ai/agent-oxii` ← new OpenAI-powered smart home agent
 
-The endpoint instantiates `MCPAgent`, which exclusively uses Vertex AI (Gemini) through the mounted service account file.
+The endpoint instantiates `MCPAgent`, which exclusively uses OpenAI GPT through the API key.
 
 ## ✅ Quality Checklist
 
-- Vertex AI configuration is enforced at agent startup (service account path validated).
+- OpenAI API key configuration is enforced at agent startup.
 - Docker compose instructions cover running the chatbot plus connecting to a separately managed MCP server via `OXII_MCP_SERVER_URL`.
 - `test_folders/testing_api.py` kept as a reference, per request.
 

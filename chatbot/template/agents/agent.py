@@ -12,7 +12,7 @@ from langchain.agents import AgentExecutor
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, BaseMessage
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_google_vertexai import ChatVertexAI
+from langchain_openai import ChatOpenAI
 from googlesearch import search
 from langchain.agents.openai_functions_agent.base import OpenAIFunctionsAgent
 from langchain_core.chat_history import BaseChatMessageHistory
@@ -65,12 +65,6 @@ def _resolve_service_account_path(raw_path: str) -> Path:
     )
 
 
-def _configure_google_credentials() -> Path:
-    credentials_path = _resolve_service_account_path(env.GOOGLE_APPLICATION_CREDENTIALS)
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str(credentials_path)
-    os.environ["GOOGLE_CLOUD_PROJECT"] = env.GOOGLE_CLOUD_PROJECT
-    return credentials_path
-
 
 memories = {}
 
@@ -88,26 +82,21 @@ class MCPAgent:
     ):
         # Initialize LLM
         try:
-            credentials_path = _configure_google_credentials()
             selected_model = model or env.MODEL_NAME
 
             self.model = selected_model
-            self.llm = ChatVertexAI(
-                model_name=selected_model,
+            self.llm = ChatOpenAI(
+                model=selected_model,
                 temperature=temperature,
-                project=env.GOOGLE_CLOUD_PROJECT,
-                location=env.GOOGLE_CLOUD_LOCATION
+                openai_api_key=env.OPENAI_API_KEY
             )
 
             logger.info(
-                "Initialized ChatVertexAI with model=%s, project=%s, location=%s, credentials=%s",
-                selected_model,
-                env.GOOGLE_CLOUD_PROJECT,
-                env.GOOGLE_CLOUD_LOCATION,
-                credentials_path,
+                "Initialized ChatOpenAI with model=%s",
+                selected_model
             )
         except Exception as e:
-            logger.error(f"Error initializing ChatVertexAI: {str(e)}")
+            logger.error(f"Error initializing ChatOpenAI: {str(e)}")
             raise
         
         # Create the prompt template
@@ -186,7 +175,7 @@ class MCPAgent:
                         tools=tools,
                         verbose=True,
                         handle_parsing_errors=True,
-                        max_iterations=5
+                        max_iterations=env.MAX_ITERATIONS
                     )
 
                     # Set up runnable with chat history
@@ -254,7 +243,7 @@ class MCPAgent:
                     tools=tools,
                     verbose=True,
                     handle_parsing_errors=True,
-                    max_iterations=5
+                    max_iterations=env.MAX_ITERATIONS
                 )
 
                 # Set up runnable with chat history

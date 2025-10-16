@@ -320,7 +320,16 @@ def get_plan_by_id_function(plan_id: str) -> str:
 create_plan_tool = StructuredTool.from_function(
     func=create_plan_function,
     name="create_plan",
-    description="Create a structured plan for a given task using the GraphQL API. This tool helps the Planning Agent break down complex tasks into actionable steps.",
+    description="""
+    Create a structured plan for a given task using the GraphQL API.
+    This tool helps the Planning Agent break down complex tasks into actionable steps.
+    Input:
+    - title_plan: Title of the plan (string)
+    - goal_plan: Goal of the plan (string)
+    - list_tasks: List of tasks with title and description (list of dicts):
+        - title: Title of the task (string)
+        - description: Description of the task (string)
+    """,
     args_schema=CreatePlanInput
 )
 
@@ -328,7 +337,9 @@ create_plan_tool = StructuredTool.from_function(
 update_task_status_tool = StructuredTool.from_function(
     func=update_task_status_function,
     name="update_task_status",
-    description="Update the status of a task in the plan.",
+    description="""
+    Update the status of a task in the plan.
+    """,
     args_schema=UpdateTaskStatusInput
 )
 
