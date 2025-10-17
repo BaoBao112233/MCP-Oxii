@@ -21,7 +21,7 @@ MCP-OXII combines on-chain analytics with OXII smart home automation. The platfo
 ### Key Components
 
 - **FastAPI Gateway** – serves REST endpoints under `/ai/*` for the chat agents.
-- **OpenAI Agent (`template/agents/agent.py`)** – wraps OpenAI GPT via the official OpenAI SDK; uses API key from environment.
+- **Open Router Agent (`template/agents/agent.py`)** – wraps OpenAI-compatible models via Open Router API; uses API key from environment.
 - **OXII MCP Server** – Python service powered by `mcp.server.fastmcp.FastMCP` exposing device tools (auth, list devices, switch control, AC control, cronjobs, room one-touch, etc.).
 
 ## 🧰 Environment Setup
@@ -43,11 +43,11 @@ cp .env.template .env
 
 Fill in the placeholders inside `.env`:
 
-- OpenAI API key (`OPENAI_API_KEY`).
+- Open Router API key (`OPENAI_API_KEY`).
 - OXII account credentials (`USER_PHONE`, `USER_PASSWORD`, `USER_COUNTRY`).
 - OXII MCP server URL (defaults to the Docker service name).
 
-> The OpenAI API key is set in the `.env` file.
+> The Open Router API key is set in the `.env` file.
 
 1. **(Optional) Poetry shell**
 
@@ -115,11 +115,11 @@ The FastAPI router (`template/routers/v1/ai.py`) exposes:
 
 - `POST /ai/agent-oxii` ← new OpenAI-powered smart home agent
 
-The endpoint instantiates `MCPAgent`, which exclusively uses OpenAI GPT through the API key.
+The endpoint instantiates `MCPAgent`, which exclusively uses OpenAI-compatible models through Open Router API.
 
 ## ✅ Quality Checklist
 
-- OpenAI API key configuration is enforced at agent startup.
+- Open Router API key configuration is enforced at agent startup.
 - Docker compose instructions cover running the chatbot plus connecting to a separately managed MCP server via `OXII_MCP_SERVER_URL`.
 - `test_folders/testing_api.py` kept as a reference, per request.
 

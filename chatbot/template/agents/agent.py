@@ -88,7 +88,8 @@ class MCPAgent:
             self.llm = ChatOpenAI(
                 model=selected_model,
                 temperature=temperature,
-                openai_api_key=env.OPENAI_API_KEY
+                openai_api_key=env.OPENAI_API_KEY,
+                base_url="https://openrouter.ai/api/v1"
             )
 
             logger.info(
@@ -205,7 +206,9 @@ class MCPAgent:
                             "run_name": f"Agent:Session{request.session_id}"
                         }
                     )
-                    
+                    print("-"*10)
+                    logger.info("response: %s", response)
+                    print("-"*10)
                     # Extract and process the response
                     response_text = response['output']
                     

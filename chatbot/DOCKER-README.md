@@ -16,7 +16,7 @@ Run all commands from inside the `chatbot/` directory.
    ```bash
    cp .env.template .env
    ```
-2. Fill in `.env` with your OpenAI API key.
+2. Fill in `.env` with your Open Router API key.
 
 ## 🏗️ Build and Run
 
