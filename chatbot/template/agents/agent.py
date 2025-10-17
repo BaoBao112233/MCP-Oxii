@@ -351,13 +351,13 @@ class MCPAgent:
                 conversation_id=conversation_id
             )
 
-            # Initialize with user ID if it's a new session
-            if not memories[session_key].exists_session():
-                memories[session_key].add_ai_message(
-                    f"Here we go! Your Conversation ID is {conversation_id}. "
-                    f"I will never give it out again. "
-                    f"It's just for getting more info from tools you need to use. "
-                    f"Input: <token: string>."
-                )
+            # # Initialize with user ID if it's a new session
+            # if not memories[session_key].exists_session():
+            #     memories[session_key].add_ai_message(
+            #         f"Here we go! Your Conversation ID is {conversation_id}. "
+            #         f"I will never give it out again. "
+            #         f"It's just for getting more info from tools you need to use. "
+            #         f"Input: <token: string>."
+            #     )
 
         return memories[session_key]

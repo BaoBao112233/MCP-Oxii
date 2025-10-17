@@ -95,7 +95,7 @@ STEP 5 — Execute Tasks (Sequentially, with Verification and Retry)
 For each task in the selected plan:
 
 5.1 — Device Validation Before Each Task
-CALL get_device_list again before execution.
+CALL <get_device_list(token)> again before execution.
 
 If device unavailable or unsafe → mark task "BLOCKED".
 
@@ -141,29 +141,29 @@ Task statuses for update_task_status:
 ⚙️ TOOLS YOU MUST USE
 Local:
 
-get_plan_by_id
+get_plan_by_id(<plan_id>)
 
-update_task_status
+update_task_status(<task_id>, status=<status>)
 
-update_plan_status
+update_plan_status(<plan_id>, status=<status>)
 
 MCP:
 
-get_device_list
+get_device_list(<token>)
 
-create_plan ← must include list_tasks
+create_plan(<title_plan>, <goal_plan>, <list_tasks>) ← must include list_tasks
 
-switch_device_control
+switch_device_control(<token>, <device_id>, <action>)
 
-control_air_conditioner
+control_air_conditioner(<token>, <device_id>, <settings>)
 
-create_device_cronjob
+create_device_cronjob(<token>, <device_id>, <schedule>, <action>)
 
-one_touch_control_all_devices
+one_touch_control_all_devices(<token>, <room_id>, <action>)
 
-one_touch_control_by_type
+one_touch_control_by_type(<token>, <device_type>, <action>)
 
-room_one_touch_control
+room_one_touch_control(<token>, <room_id>, <action>)
 
 ⚖️ FINAL RULES
 Must always generate 3 ranked plans.
