@@ -1,0 +1,96 @@
+# Simple Multi-service Dockerfile for MCP Oxii-server + Temp API
+FROM python:3.10-slim
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PIP_NO_CACHE_DIR=1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    supervisor \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install poetry for MCP server dependencies
+RUN pip install poetry
+
+# === MCP Oxii-Server Setup ===
+# Create directory for MCP server
+RUN mkdir -p /app/mcp-server
+
+# Copy MCP server files
+COPY mcp/oxii-server/pyproject.toml /app/mcp-server/
+COPY mcp/oxii-server/main.py /app/mcp-server/
+COPY mcp/oxii-server/tools/ /app/mcp-server/tools/
+
+# Install MCP server dependencies
+WORKDIR /app/mcp-server
+RUN poetry config virtualenvs.create false \
+    && poetry install --only main --no-root --no-dev
+
+# === Temp API Setup ===
+# Create directory for temp API
+RUN mkdir -p /app/temp-api
+WORKDIR /app/temp-api
+
+# Copy temp API requirements and install
+COPY temp_api/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy temp API files
+COPY temp_api/ .
+
+# === Simple Configuration ===
+WORKDIR /app
+
+# Create supervisor configuration for 2 services only
+RUN mkdir -p /var/log/supervisor
+
+# Create simple supervisor config
+RUN echo '[supervisord]\n\
+nodaemon=true\n\
+user=root\n\
+logfile=/var/log/supervisor/supervisord.log\n\
+pidfile=/var/run/supervisord.pid\n\
+\n\
+[program:mcp-server]\n\
+command=python main.py\n\
+directory=/app/mcp-server\n\
+autostart=true\n\
+autorestart=true\n\
+stderr_logfile=/var/log/supervisor/mcp-server.err.log\n\
+stdout_logfile=/var/log/supervisor/mcp-server.out.log\n\
+environment=PORT=9031\n\
+\n\
+[program:temp-api]\n\
+command=python main.py\n\
+directory=/app/temp-api\n\
+autostart=true\n\
+autorestart=true\n\
+stderr_logfile=/var/log/supervisor/temp-api.err.log\n\
+stdout_logfile=/var/log/supervisor/temp-api.out.log\n\
+environment=PORT=8000' > /etc/supervisor/conf.d/supervisord.conf
+
+# Create startup script
+RUN echo '#!/bin/bash\n\
+echo "🚀 Starting MCP Oxii-server (port 9031) + Temp API (port 8000)..."\n\
+echo "📊 MCP Server: http://localhost:9031"\n\
+echo "📊 Temp API: http://localhost:8000"\n\
+echo "🔍 Health checks available at /health on both services"\n\
+exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf' > /app/start.sh \
+    && chmod +x /app/start.sh
+
+# Expose both ports
+EXPOSE 9031 8000
+
+# Health check (check both services)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:9031/health && curl -f http://localhost:8000/health || exit 1
+
+# Start the application
+CMD ["/app/start.sh"]
