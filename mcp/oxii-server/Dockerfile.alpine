@@ -1,25 +1,27 @@
-FROM python:3.10-slim
+# Lightweight Dockerfile for MCP Oxii-server (Cloud Deployment)
+FROM python:3.10-alpine
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PIP_NO_CACHE_DIR=1
-ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 
 WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apk add --no-cache \
     curl \
-    && rm -rf /var/lib/apt/lists/*
+    gcc \
+    musl-dev \
+    python3-dev
 
 # Install poetry
 RUN pip install poetry
 
-# Copy dependency files first for better caching
+# Copy dependency files
 COPY pyproject.toml .
 
-# Configure poetry and install dependencies
+# Install dependencies
 RUN poetry config virtualenvs.create false \
     && poetry install --only main --no-root --no-dev
 
@@ -27,8 +29,8 @@ RUN poetry config virtualenvs.create false \
 COPY main.py .
 COPY tools/ ./tools/
 
-# Create non-root user for security
-RUN useradd --create-home --shell /bin/bash appuser \
+# Create non-root user
+RUN adduser -D -s /bin/sh appuser \
     && chown -R appuser:appuser /app
 USER appuser
 

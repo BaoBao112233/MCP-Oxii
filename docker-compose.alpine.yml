@@ -1,0 +1,34 @@
+services:
+  # MCP Oxii Server (Alpine Build)
+  oxii-server:
+    build:
+      context: ./mcp/oxii-server
+      dockerfile: Dockerfile.alpine
+    ports:
+      - "9031:9031"
+    environment:
+      - PORT=9031
+    env_file:
+      - ./mcp/oxii-server/.env
+    restart: unless-stopped
+    networks:
+      - mcp-network
+
+  # Temp API (Alpine Build)
+  temp-api:
+    build:
+      context: ./temp_api
+      dockerfile: Dockerfile.alpine
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+    restart: unless-stopped
+    networks:
+      - mcp-network
+    depends_on:
+      - oxii-server
+
+networks:
+  mcp-network:
+    driver: bridge

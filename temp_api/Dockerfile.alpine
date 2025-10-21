@@ -1,19 +1,21 @@
-FROM python:3.10-slim
+# Lightweight Dockerfile for Temp API (Cloud Deployment)
+FROM python:3.10-alpine
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PIP_NO_CACHE_DIR=1
-ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 
 WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apk add --no-cache \
     curl \
-    && rm -rf /var/lib/apt/lists/*
+    gcc \
+    musl-dev \
+    python3-dev
 
-# Copy requirements first for better caching
+# Copy requirements
 COPY requirements.txt .
 
 # Install Python dependencies
@@ -22,8 +24,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
-# Create non-root user for security
-RUN useradd --create-home --shell /bin/bash appuser \
+# Create non-root user
+RUN adduser -D -s /bin/sh appuser \
     && chown -R appuser:appuser /app
 USER appuser
 

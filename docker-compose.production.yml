@@ -1,0 +1,50 @@
+services:
+  # MCP Oxii Server (Production Build)
+  oxii-server:
+    build:
+      context: ./mcp/oxii-server
+      dockerfile: Dockerfile.production
+    ports:
+      - "9031:9031"
+    environment:
+      - PORT=9031
+    env_file:
+      - ./mcp/oxii-server/.env
+    restart: unless-stopped
+    networks:
+      - mcp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9031/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Temp API (Production Build)
+  temp-api:
+    build:
+      context: ./temp_api
+      dockerfile: Dockerfile.production
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+    restart: unless-stopped
+    networks:
+      - mcp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      oxii-server:
+        condition: service_healthy
+
+networks:
+  mcp-network:
+    driver: bridge
+
+volumes:
+  app-data:

@@ -1,0 +1,28 @@
+services:
+  # MCP Oxii Server
+  - type: web
+    name: mcp-oxii-server
+    env: docker
+    dockerfilePath: ./mcp/oxii-server/Dockerfile.alpine
+    dockerContext: ./mcp/oxii-server
+    port: 9031
+    envVars:
+      - key: PORT
+        value: 9031
+      - key: OXII_BASE_URL
+        value: https://stg-oxii-api.smarthiz.vn
+      - key: DEBUG
+        value: false
+    healthCheckPath: /health
+
+  # Temp API
+  - type: web
+    name: temp-api
+    env: docker
+    dockerfilePath: ./temp_api/Dockerfile.alpine
+    dockerContext: ./temp_api
+    port: 8000
+    envVars:
+      - key: PORT
+        value: 8000
+    healthCheckPath: /health
