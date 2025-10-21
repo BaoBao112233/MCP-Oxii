@@ -1,0 +1,50 @@
+services:
+  # MCP Oxii Server
+  oxii-server:
+    build:
+      context: ./mcp/oxii-server
+      dockerfile: Dockerfile
+    ports:
+      - "9031:9031"
+    environment:
+      - PORT=9031
+    env_file:
+      - ./mcp/oxii-server/.env
+    restart: unless-stopped
+    networks:
+      - mcp-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9031/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Temp API (Planning API)
+  temp-api:
+    build:
+      context: ./temp_api
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+    restart: unless-stopped
+    networks:
+      - mcp-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      - oxii-server
+
+networks:
+  mcp-network:
+    driver: bridge
+
+volumes:
+  # Volume for persistent data if needed
+  app-data:

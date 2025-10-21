@@ -29,6 +29,7 @@ def main():
     
     # Create FastMCP server instance
     mcp = FastMCP("oxii_smart_home", port=9031)
+    
     load_dotenv()
     
     # Register all OXII tools
@@ -55,6 +56,12 @@ def main():
 
     # Build Starlette app so we can expose human-readable docs alongside SSE endpoints
     app = mcp.sse_app()
+    
+    # Add health check endpoint
+    @app.route("/health", methods=["GET"])
+    async def health_check(_: object) -> JSONResponse:
+        """Health check endpoint for Docker"""
+        return JSONResponse({"status": "healthy", "service": "oxii-mcp-server"})
 
     # Prepare README preview for the docs endpoint
     readme_path = Path(__file__).with_name("README.md")

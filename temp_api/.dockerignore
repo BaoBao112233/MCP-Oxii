@@ -1,0 +1,12 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.git
+.gitignore
+README.md
+test_*.py
+test_*.json
+.pytest_cache
+.coverage
+*.log
