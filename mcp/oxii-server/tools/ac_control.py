@@ -7,14 +7,27 @@ from .common import get_rooms_with_devices, _request
 
 
 def control_air_conditioner(
-    power: Annotated[str, Field(description="Trạng thái nguồn: '1'/'on' để bật, '0'/'off' để tắt")],
-    mode: Annotated[str, Field(description="Chế độ: '1'=auto, '2'=heat, '3'=cool, '4'=dry, '5'=fan", default="1")],
-    temp: Annotated[str, Field(description="Nhiệt độ mục tiêu (16-32)", default="24")],
-    fan_speed: Annotated[str, Field(description="Tốc độ quạt: '0'=auto, '1'=low, '2'=medium, '3'=high, '4'=turbo", default="0")],
-    swing_h: Annotated[str, Field(description="Gió ngang: '1'=bật, '0'=tắt", default="0")],
-    swing_v: Annotated[str, Field(description="Gió dọc: '1'=bật, '0'=tắt", default="0")],
+    power: Annotated[str, Field(description="Status power: '1'/'on' turn on, '0'/'off' turn off")],
+    mode: Annotated[str, Field(description="Mode: '1'=auto, '2'=heat, '3'=cool, '4'=dry, '5'=fan", default="1")],
+    temp: Annotated[str, Field(description="Target temperature (16-32)", default="24")],
+    fan_speed: Annotated[str, Field(description="Fan speed: '0'=auto, '1'=low, '2'=medium, '3'=high, '4'=turbo", default="0")],
+    swing_h: Annotated[str, Field(description="Horizontal swing: '1'=on, '0'=off", default="0")],
+    swing_v: Annotated[str, Field(description="Vertical swing: '1'=on, '0'=off", default="0")],
 ) -> str:
-    """[MOCK] Send a BLE mesh command to control an OXII air conditioner."""
+    """
+    Description: [MOCK] Send a BLE mesh command to control an OXII air conditioner.
+    
+    Args:
+        power (str): Status power: '1'/'on' turn on, '0'/'off' turn off.
+        mode (str): Mode: '1'=auto, '2'=heat, '3'=cool, '4'=dry, '5'=fan.
+        temp (str): Target temperature (16-32).
+        fan_speed (str): Fan speed: '0'=auto, '1'=low, '2'=medium, '3'=high, '4'=turbo.
+        swing_h (str): Horizontal swing: '1'=on, '0'=off.
+        swing_v (str): Vertical swing: '1'=on, '0'=off.
+    
+    Returns:
+        str: Result message of the AC control action.
+    """
     
     mode_names = {
         "1": "tự động",

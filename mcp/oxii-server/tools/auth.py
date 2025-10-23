@@ -27,7 +27,17 @@ def get_oxii_token(
     password: Annotated[Optional[str], Field(description="Password for the OXII account", default=None)] = None,
     country: Annotated[Optional[str], Field(description="Country code (default: VI)", default="VI")] = None,
 ) -> str:
-    """[MOCK] Return an authentication token from the OXII API."""
+    """
+    Description: [MOCK] Return an authentication token from the OXII API.
+    
+    Args:
+        phone (Optional[str]): Phone number for the OXII account.
+        password (Optional[str]): Password for the OXII account.
+        country (Optional[str]): Country code (default: VI).
+    
+    Returns:
+        str: Authentication token.
+    """
     
     # Simulate authentication
     if phone and password:

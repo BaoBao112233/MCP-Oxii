@@ -20,8 +20,22 @@ def create_device_cronjob(
     job_status: Annotated[int, Field(description="Trạng thái job: 0 = tắt, 1 = bật", default=1)],
     issetting_online: Annotated[bool, Field(description="Áp dụng ngay trên thiết bị", default=True)],
 ) -> str:
-    """[MOCK] Create or update a cronjob for the specified switch button."""
+    """
+    Description: [MOCK] Create or update a cronjob for the specified switch button.
     
+    Args:
+        token (str): Authentication token from OXII API.
+        buttonId (int): ID of the button to set the cronjob for.
+        cron_time (str): 6-field cron expression, e.g., '0 30 8 * * 1-5'.
+        command (str): Command to execute: 'on' or 'off'.
+        action (int): 1 = create/update, 3 = delete.
+        job_status (int): Job status: 0 = disabled, 1 = enabled.
+        issetting_online (bool): Apply immediately on device.
+    
+    Returns:
+        str: Result message of the cronjob creation action.
+    """
+
     command_upper = command.strip().upper()
     if command_upper not in {"ON", "OFF"}:
         return "Lệnh không hợp lệ. Vui lòng chọn 'on' hoặc 'off'."

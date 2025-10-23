@@ -21,7 +21,18 @@ def room_one_touch_control(
         ),
     ],
 ) -> str:
-    """[MOCK] Execute one-touch commands for a specific room."""
+    """
+    Description: [MOCK] Execute one-touch commands for a specific room.
+
+    Args:
+        token (str): Authentication token from OXII API.
+        room_id (str): ID of the room to control.
+        one_touch_code (str): One-touch code: TURN_ON_ALL_DEVICES, TURN_OFF_ALL_DEVICES, TURN_ON_LIGHT,
+            TURN_OFF_LIGHT, TURN_ON_FAN, TURN_OFF_FAN, TURN_ON_HOT_COLD_SHOWER, TURN_OFF_HOT_COLD_SHOWER
+    
+    Returns:
+        str: Result message of the room one-touch control action.
+    """
     
     valid_codes = {
         "TURN_ON_ALL_DEVICES": ("bật", None, "tất cả thiết bị"),

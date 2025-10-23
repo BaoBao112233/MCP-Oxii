@@ -17,7 +17,7 @@ COPY pyproject.toml .
 # Install dependencies to a virtual environment
 RUN poetry config virtualenvs.create true \
     && poetry config virtualenvs.in-project true \
-    && poetry install --only main --no-root --no-dev
+    && poetry install --only main --no-root
 
 # Production stage
 FROM python:3.10-slim as production

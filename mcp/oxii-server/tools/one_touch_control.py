@@ -11,7 +11,16 @@ def one_touch_control_all_devices(
     token: Annotated[str, Field(description="Authentication token from OXII API")],
     command: Annotated[str, Field(description="Lệnh: 'on' hoặc 'off'")],
 ) -> str:
-    """[MOCK] Switch all devices in the home on or off."""
+    """
+    Description: [MOCK] Switch all devices in the home on or off.
+    
+    Args:
+        token (str): Authentication token from OXII API.
+        command (str): Command: 'on' or 'off'.
+    
+    Returns:
+        str: Result message of the one-touch control action.
+    """
     
     action = command.strip().upper()
     if action not in {"ON", "OFF"}:
@@ -71,7 +80,17 @@ def one_touch_control_by_type(
     ],
     action: Annotated[str, Field(description="Lệnh: 'on' hoặc 'off'")],
 ) -> str:
-    """[MOCK] Switch devices of a specific type on or off."""
+    """
+    Description: [MOCK] Switch devices of a specific type on or off.
+    
+    Args:
+        token (str): Authentication token from OXII API.
+        device_type (str): Device type: LIGHT, TV, CONDITIONER, FAN, HOT_COLD_SHOWER, SOCKET.
+        action (str): Command: 'on' or 'off'.
+    
+    Returns:
+        str: Result message of the one-touch control action.
+    """
     
     valid_device_types = {"LIGHT", "TV", "CONDITIONER", "FAN", "HOT_COLD_SHOWER", "SOCKET"}
     device_type_upper = device_type.strip().upper()

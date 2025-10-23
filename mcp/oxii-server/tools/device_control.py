@@ -10,7 +10,15 @@ from .mockup_data import MOCK_ROOMS, BUTTON_STATES
 def get_device_list(
     token: Annotated[str, Field(description="Authentication token from OXII API")]
 ) -> str:
-    """[MOCK] Return the list of rooms, devices, and remote buttons as formatted JSON."""
+    """
+    Description: [MOCK] Return the list of rooms, devices, and remote buttons as formatted JSON.
+
+    Args:
+        token (str): Authentication token from OXII API.
+    
+    Returns:
+        str: JSON string of rooms and devices.
+    """
     
     print(f"[MOCK] Getting device list with token: {token[:20]}...")
     
@@ -29,8 +37,18 @@ def switch_device_control(
     buttonId: Annotated[int, Field(description="ID of the button to control")],
     action: Annotated[str, Field(description="Action: 'on' or 'off'")],
 ) -> str:
-    """[MOCK] Toggle a switch device on or off."""
+    """
+    Description: [MOCK] Toggle a switch device on or off.
+
+    Args:
+        token (str): Authentication token from OXII API.
+        buttonId (int): ID of the button to control.
+        action (str): Action to perform: 'on' or 'off'.
     
+    Returns:
+        str: Result message of the control action.
+    """
+
     action_normalised = action.strip().lower()
     if action_normalised not in {"on", "off"}:
         return "Hành động không hợp lệ. Vui lòng chọn 'on' hoặc 'off'."

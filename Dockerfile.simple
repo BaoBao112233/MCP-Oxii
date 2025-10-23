@@ -31,7 +31,7 @@ COPY mcp/oxii-server/tools/ /app/mcp-server/tools/
 # Install MCP server dependencies
 WORKDIR /app/mcp-server
 RUN poetry config virtualenvs.create false \
-    && poetry install --only main --no-root --no-dev
+    && poetry install --only main --no-root
 
 # === Temp API Setup ===
 # Create directory for temp API
