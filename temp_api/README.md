@@ -9,15 +9,79 @@ FastAPI application for managing plans and tasks with GraphQL-like response form
 - ✅ Update task status and execution results
 - ✅ Get plans and tasks
 - ✅ In-memory storage (for development/demo)
+- ✅ Docker containerization with compose
+- ✅ Optional Redis cache and PostgreSQL database
+- ✅ Health checks and monitoring
 
-## Installation
+## Quick Start with Docker
+
+### Prerequisites
+- Docker and Docker Compose installed
+- Port 8000 available
+
+### Using the Docker Runner Script
+
+```bash
+# Make script executable
+chmod +x docker-run.sh
+
+# Start basic API
+./docker-run.sh start
+
+# Start with Redis cache
+./docker-run.sh start-with-cache
+
+# Start with PostgreSQL database
+./docker-run.sh start-with-db
+
+# Start with all services
+./docker-run.sh start-full
+
+# Check status
+./docker-run.sh status
+
+# View logs
+./docker-run.sh logs -f
+
+# Stop services
+./docker-run.sh stop
+```
+
+### Manual Docker Commands
+
+```bash
+# Copy environment file and adjust settings
+cp .env.example .env
+
+# Start basic API only
+docker compose up -d planner-api
+
+# Start with cache
+docker compose --profile with-cache up -d
+
+# Start with database
+docker compose --profile with-db up -d
+
+# Start everything
+docker compose --profile with-cache --profile with-db up -d
+
+# View logs
+docker compose logs -f planner-api
+
+# Stop all services
+docker compose down
+```
+
+## Local Development
+
+### Installation
 
 ```bash
 cd temp_api
 pip install -r requirements.txt
 ```
 
-## Running the API
+### Running the API
 
 ```bash
 python main.py

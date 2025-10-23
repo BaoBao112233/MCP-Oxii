@@ -1,0 +1,149 @@
+# MCP-Oxii Temp API Docker Compose Configuration
+# Planner API service for managing plans and tasks
+
+services:
+  # Planner API Service
+  planner-api:
+    build:
+      context: .
+      dockerfile: ${DOCKERFILE:-Dockerfile}
+    container_name: ${CONTAINER_NAME:-mcp-planner-api}
+    restart: unless-stopped
+
+    ports:
+      - "${HOST_PORT:-8000}:8000"
+
+    environment:
+      # Application settings
+      - API_VERSION=${API_VERSION:-v1}
+      - APP_NAME=${APP_NAME:-Planner API}
+      - APP_DESC=${APP_DESC:-API for managing plans and tasks}
+      - APP_PORT=8000
+      
+      # Python environment
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+      
+      # API settings
+      - CORS_ORIGINS=${CORS_ORIGINS:-*}
+      - DEBUG_MODE=${DEBUG_MODE:-false}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      
+      # Database settings (if needed for future extension)
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///./plans.db}
+
+    volumes:
+      # For development hot-reload (comment out for production)
+      - ./:/app
+      # Data persistence
+      - ${DATA_VOLUME:-./data}:/app/data
+      - ${LOG_VOLUME:-./logs}:/app/logs
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+    networks:
+      - planner-network
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "${LOG_MAX_SIZE:-10m}"
+        max-file: "${LOG_MAX_FILE:-5}"
+
+    # Resource limits (adjust based on your server capacity)
+    deploy:
+      resources:
+        limits:
+          cpus: '${CPU_LIMIT:-1.0}'
+          memory: ${MEMORY_LIMIT:-512M}
+        reservations:
+          cpus: '${CPU_RESERVATION:-0.5}'
+          memory: ${MEMORY_RESERVATION:-256M}
+
+  # Optional: Redis Cache Service (if needed for caching plans)
+  redis:
+    image: redis:7-alpine
+    container_name: mcp-planner-redis
+    restart: unless-stopped
+    profiles: ["with-cache"]  # Only start with --profile with-cache
+
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+
+    volumes:
+      - redis_data:/data
+
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru"]
+
+    networks:
+      - planner-network
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Optional: PostgreSQL Database (if needed for persistent storage)
+  postgres:
+    image: postgres:15-alpine
+    container_name: mcp-planner-db
+    restart: unless-stopped
+    profiles: ["with-db"]  # Only start with --profile with-db
+
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-planner_db}
+      - POSTGRES_USER=${POSTGRES_USER:-planner_user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-planner_pass}
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+    networks:
+      - planner-network
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-planner_user} -d ${POSTGRES_DB:-planner_db}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+# Network configuration
+networks:
+  planner-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.0.0/16
+
+# Volumes for persistent storage
+volumes:
+  redis_data:
+    driver: local
+  postgres_data:
+    driver: local
+  planner_logs:
+    driver: local
